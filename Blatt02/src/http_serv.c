@@ -101,7 +101,7 @@ void read_socket_request(int sockfd) {
         err_abort((char *) "Fehler beim Lesen des Sockets!");
     }
     printf("%zu byte vom Socket gelesen.\n", n);
-    printf("%s\n", in);
+    //printf("%s\n", in);
 
     char uri[255];
     sscanf(in, "GET %255s HTTP/", uri);
@@ -143,7 +143,7 @@ void write_header(int sockfd, char* status_code, char* status_message, char* con
 void write_index(int sockfd, char *uri){
     char url[255];
     sprintf(url, "%s%s", doc_root, uri);
-    printf("%s\n", url);
+    printf("%s\n", uri);
 
     DIR* dir = opendir(url);
     struct dirent* dirent;
@@ -153,8 +153,11 @@ void write_index(int sockfd, char *uri){
     write_bytes(sockfd, "<h1>Index</h1>");
     if(dir){
         while((dirent = readdir(dir)) != NULL){
-            write_bytes(sockfd, "<a href=\"");
+            write_bytes(sockfd, "<a href=\"./");
             write_bytes(sockfd, dirent->d_name);
+            if(dirent->d_type == DT_DIR){
+                write_bytes(sockfd, "/");
+            }
             write_bytes(sockfd, "\">");
             write_bytes(sockfd, dirent->d_name);
             write_bytes(sockfd, "</a><br>");
