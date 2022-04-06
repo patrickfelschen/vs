@@ -2,7 +2,7 @@
 <project version="4">
   <component name="CMakeSharedSettings">
     <configurations>
-      <configuration PROFILE_NAME="Debug-Remote" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="Julians Linux Server" />
+      <configuration PROFILE_NAME="Debug-Linux" ENABLED="true" CONFIG_NAME="Debug" TOOLCHAIN_NAME="WSL" />
     </configurations>
   </component>
 </project>
