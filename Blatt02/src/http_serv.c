@@ -1,6 +1,9 @@
-/* Mehrstufiger TCP Echo-Server fuer mehrere Clients  
+/* Mehrstufiger TCP HTTP-Server fuer mehrere Clients
  * Basiert auf Stevens: Unix Network Programming  
- * getestet unter Ubuntu 20.04 64 Bit 
+ * getestet unter Ubuntu 20.04 64 Bit.
+ *
+ * Bearbeitet von Patrick Felschen und
+ * Julian Voss.
  */
 
 #include <stdio.h>
