@@ -15,22 +15,19 @@
 #include <dirent.h>
 #include <sys/stat.h>
 
-//#define SRV_PORT 8998
-#define MAX_SOCK 10
 #define MAXLINE 512
 
 // Vorwaertsdeklarationen 
-void read_socket_request(int);
-void write_header(int sockfd, char* status_code, char* status_message, char* content_type);
-void get_request(int sockfd, char *url);
+void read_socket_request(int sockfd);
+void write_header(int sockfd, char *status_code, char *status_message, char *content_type);
+void get_request(int sockfd, char *uri);
 void write_index(int sockfd, char *url);
+void write_file_bytewise(int sockfd, char *url);
 void err_abort(char *str);
 
-char date_buf[32];
 char *doc_root;
 
 int main(int argc, char *argv[]) {
-
     // Deskriptoren, Adresslaenge, Prozess-ID
     int sockfd;
     int newsockfd;
@@ -40,7 +37,6 @@ int main(int argc, char *argv[]) {
     // Socket Adressen
     struct sockaddr_in cli_addr;
     struct sockaddr_in srv_addr;
-
     // Root Ordner
     doc_root = argv[1];
     // Port
@@ -100,14 +96,14 @@ void read_socket_request(int sockfd) {
     } else if (n < 0) {
         err_abort((char *) "Fehler beim Lesen des Sockets!");
     }
-    printf("%zu byte vom Socket gelesen.\n", n);
+    //printf("%zu byte vom Socket gelesen.\n", n);
     //printf("%s\n", in);
-
     char uri[255];
     sscanf(in, "GET %255s HTTP/", uri);
     get_request(sockfd, uri);
 }
 
+/* Wertet ein GET-Request aus */
 void get_request(int sockfd, char *uri) {
     char url[255];
     sprintf(url, "%s%s", doc_root, uri);
@@ -116,19 +112,30 @@ void get_request(int sockfd, char *uri) {
     lstat(url, &buf);
     S_ISDIR(buf.st_mode);
 
-    if(S_ISDIR(buf.st_mode)){
+    if (S_ISDIR(buf.st_mode)) {
         write_header(sockfd, "200", "OK", "text/html; charset=iso-8859-1");
-        write_index(sockfd, uri);
-    }else{
+        write_index(sockfd, url);
+    } else if (strstr(url, ".html")) {
+        write_header(sockfd, "200", "OK", "text/html; charset=iso-8859-1");
+        write_file_bytewise(sockfd, url);
+    } else if (strstr(url, ".txt")) {
+        write_header(sockfd, "200", "OK", "text/plain; charset=iso-8859-1");
+        write_file_bytewise(sockfd, url);
+    } else if (strstr(url, ".jpg")) {
+        write_header(sockfd, "200", "OK", "image/jpg");
+        write_file_bytewise(sockfd, url);
+    } else {
         write_header(sockfd, "404", "ERROR", "text/html; charset=iso-8859-1");
     }
 }
 
-void write_bytes(int sockfd, char* bytes){
+/* Schreibt ein Byte auf den Socket */
+void write_bytes(int sockfd, char *bytes) {
     write(sockfd, bytes, strlen(bytes));
 }
 
-void write_header(int sockfd, char* status_code, char* status_message, char* content_type){
+/* Schreibt alle Header-Informationen auf den Socket */
+void write_header(int sockfd, char *status_code, char *status_message, char *content_type) {
     write_bytes(sockfd, "HTTP/1.1 ");
     write_bytes(sockfd, status_code);
     write_bytes(sockfd, " ");
@@ -140,22 +147,30 @@ void write_header(int sockfd, char* status_code, char* status_message, char* con
     write_bytes(sockfd, "\r\n\r\n");
 }
 
-void write_index(int sockfd, char *uri){
-    char url[255];
-    sprintf(url, "%s%s", doc_root, uri);
-    printf("%s\n", uri);
+/* Schreibt den Dateiinhalt byteweise auf den Socket */
+void write_file_bytewise(int sockfd, char *url) {
+    FILE *file = fopen(url, "r");
+    char file_buf[MAXLINE];
+    size_t n = 0;
+    while ((n = read(fileno(file), file_buf, MAXLINE)) > 0) {
+        write(sockfd, file_buf, n);
+    }
+    fclose(file);
+}
 
-    DIR* dir = opendir(url);
-    struct dirent* dirent;
+/* Schreibt den Ordnerinhalt des root-Verzeichnisses auf den Socket */
+void write_index(int sockfd, char *url) {
+    DIR *dir = opendir(url);
+    struct dirent *dirent;
     write_bytes(sockfd, "<html>");
     write_bytes(sockfd, "<head><title>Index</title></head>");
     write_bytes(sockfd, "<body>");
     write_bytes(sockfd, "<h1>Index</h1>");
-    if(dir){
-        while((dirent = readdir(dir)) != NULL){
+    if (dir) {
+        while ((dirent = readdir(dir)) != NULL) {
             write_bytes(sockfd, "<a href=\"./");
             write_bytes(sockfd, dirent->d_name);
-            if(dirent->d_type == DT_DIR){
+            if (dirent->d_type == DT_DIR) {
                 write_bytes(sockfd, "/");
             }
             write_bytes(sockfd, "\">");
