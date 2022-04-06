@@ -21,7 +21,7 @@
 
 // Vorwaertsdeklarationen 
 void read_socket_request(int);
-void write_header(int sockfd);
+void write_header(int sockfd, char* status_code, char* status_message, char* content_type);
 void get_request(int sockfd, char *url);
 void write_index(int sockfd, char *url);
 void err_abort(char *str);
@@ -101,9 +101,7 @@ void read_socket_request(int sockfd) {
         err_abort((char *) "Fehler beim Lesen des Sockets!");
     }
     printf("%zu byte vom Socket gelesen.\n", n);
-    //printf("%s\n", in);
-
-    write_header(sockfd);
+    printf("%s\n", in);
 
     char uri[255];
     sscanf(in, "GET %255s HTTP/", uri);
@@ -119,7 +117,10 @@ void get_request(int sockfd, char *uri) {
     S_ISDIR(buf.st_mode);
 
     if(S_ISDIR(buf.st_mode)){
+        write_header(sockfd, "200", "OK", "text/html; charset=iso-8859-1");
         write_index(sockfd, uri);
+    }else{
+        write_header(sockfd, "404", "ERROR", "text/html; charset=iso-8859-1");
     }
 }
 
@@ -127,10 +128,16 @@ void write_bytes(int sockfd, char* bytes){
     write(sockfd, bytes, strlen(bytes));
 }
 
-void write_header(int sockfd){
-    write_bytes(sockfd, "HTTP/1.1 200 OK\r\n");
+void write_header(int sockfd, char* status_code, char* status_message, char* content_type){
+    write_bytes(sockfd, "HTTP/1.1 ");
+    write_bytes(sockfd, status_code);
+    write_bytes(sockfd, " ");
+    write_bytes(sockfd, status_message);
+    write_bytes(sockfd, "\r\n");
     write_bytes(sockfd, "Content-Language: de\r\n");
-    write_bytes(sockfd, "Content-Type: text/html; charset=iso-8859-1\r\n\r\n");
+    write_bytes(sockfd, "Content-Type: ");
+    write_bytes(sockfd, content_type);
+    write_bytes(sockfd, "\r\n\r\n");
 }
 
 void write_index(int sockfd, char *uri){
