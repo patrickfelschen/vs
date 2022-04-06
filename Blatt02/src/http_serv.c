@@ -112,7 +112,13 @@ void get_request(int sockfd, char *uri) {
     sprintf(url, "%s%s", doc_root, uri);
 
     struct stat buf;
-    lstat(url, &buf);
+    int file_exist = lstat(url, &buf);
+
+    if(file_exist == -1){
+        write_header(sockfd, "404", "ERROR", "text/html; charset=iso-8859-1");
+        return;
+    }
+
     S_ISDIR(buf.st_mode);
 
     if (S_ISDIR(buf.st_mode)) {
