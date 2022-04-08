@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
         } else if (pid == 0) {
             close(sockfd);
             read_socket_request(newsockfd);
+            close(newsockfd);
             _exit(0);
         }
         close(newsockfd);
@@ -100,7 +101,7 @@ void read_socket_request(int sockfd) {
         err_abort((char *) "Fehler beim Lesen des Sockets!");
     }
     //printf("%zu byte vom Socket gelesen.\n", n);
-    //printf("%s\n", in);
+    printf("%s\n", in);
     char uri[255];
     sscanf(in, "GET %255s HTTP/", uri);
     get_request(sockfd, uri);
