@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Blatt03_Client" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="127.0.0.1" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="vs" TARGET_NAME="Blatt03_Client" CONFIG_NAME="Debug-Linux" RUN_TARGET_PROJECT_NAME="vs" RUN_TARGET_NAME="Blatt03_Client">
+  <configuration default="false" name="Blatt03_Client" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="127.0.0.1 100 Sample_klein.txt" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$/Blatt03/src/client" PASS_PARENT_ENVS_2="true" PROJECT_NAME="vs" TARGET_NAME="Blatt03_Client" CONFIG_NAME="Debug-Windows" RUN_TARGET_PROJECT_NAME="vs" RUN_TARGET_NAME="Blatt03_Client">
     <method v="2">
       <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
     </method>

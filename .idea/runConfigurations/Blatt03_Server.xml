@@ -1,0 +1,7 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Blatt03_Server" type="CMakeRunConfiguration" factoryName="Application" PROGRAM_PARAMS="100 Sample.txt" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" WORKING_DIR="file://$PROJECT_DIR$/Blatt03/src/server" PASS_PARENT_ENVS_2="true" PROJECT_NAME="vs" TARGET_NAME="Blatt03_Server" CONFIG_NAME="Debug-Windows" RUN_TARGET_PROJECT_NAME="vs" RUN_TARGET_NAME="Blatt03_Server">
+    <method v="2">
+      <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+    </method>
+  </configuration>
+</component>
