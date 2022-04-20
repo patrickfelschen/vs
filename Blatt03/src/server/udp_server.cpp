@@ -141,6 +141,11 @@ void handle_request(int sockfd) {
                 printf("a_chunk_size: %ld\n\n", a_chunk_size);
                 //printf("%s\n\n", result);
             }
+
+            if (a_chunk_size < session.chunk_size) {
+                // Sitzung Terminieren
+                sessions.erase(session_key);
+            }
         }
     }
 }
