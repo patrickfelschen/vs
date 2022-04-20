@@ -47,7 +47,7 @@ struct Session {
 
 std::map<long, Session> sessions;
 
-/* handle_request: Lesen von Daten vom Socket und an den Client zuruecksenden
+/*
  * HSOSSTP_INITX;<chunk size>;<filename>
  * HSOSSTP_SIDXX;<session key>
  * HSOSSTP_GETXX;<session key>;<chunk no>
