@@ -3,32 +3,21 @@
  * getestet unter Ubuntu 20.04 64 Bit
  */
 
-#include <stdio.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
 #include <map>
 #include <ctime>
 
 #define SRV_PORT 8998
-#define MAXLINE 512
+#define MAXLINE 2048
 
 // Vorwaertsdeklarationen 
 void handle_request(int);
 
 void err_abort(char *str);
-
-typedef struct session {
-    long session_key;
-    int fd;
-    int chunk_size;
-    int chunk_no;
-} Session;
-
-std::map<long, Session> sessions;
 
 int main(int argc, char *argv[]) {
     // Deskriptor
@@ -51,81 +40,106 @@ int main(int argc, char *argv[]) {
     handle_request(sockfd);
 }
 
+struct Session {
+    int fd;
+    long chunk_size;
+};
+
+std::map<long, Session> sessions;
+
 /* handle_request: Lesen von Daten vom Socket und an den Client zuruecksenden
- *
  * HSOSSTP_INITX;<chunk size>;<filename>
  * HSOSSTP_SIDXX;<session key>
  * HSOSSTP_GETXX;<session key>;<chunk no>
  * HSOSSTP_DATAX;<chunk no>;<actual chunk size>;<data>
+ * HSOSSTP_ERROR;FNF
+ * HSOSSTP_ERROR;CNF
+ * HSOSSTP_ERROR;NOS
 */
 void handle_request(int sockfd) {
     socklen_t alen;
     struct sockaddr_in cli_addr;
-    char in[MAXLINE];
-    unsigned long n;
 
-    int chunk_size;
-    char file_name[256];
-    long session_key;
-    int chunk_no;
+    char req[MAXLINE];
 
     for (;;) {
         alen = sizeof(cli_addr);
-        memset((void *) &in, '\0', sizeof(in));
-        // Daten vom Socket lesen
-        n = recvfrom(sockfd, in, MAXLINE, 0, (struct sockaddr *) &cli_addr, &alen);
-        if (n < 0) {
-            err_abort((char *) "Fehler beim Lesen des Sockets!");
-        }
-        // Format: HSOSSTP_INITX;<chunk size>;<filename>
-        if (sscanf(in, "HSOSSTP_INITX;%i;%255s", &chunk_size, &file_name[0]) > 0) {
-            printf("Chunk-Size: %i\n", chunk_size);
-            printf("Filename: %s\n", file_name);
+        recvfrom(sockfd, req, MAXLINE, 0, (struct sockaddr *) &cli_addr, &alen);
 
+        char *type = strtok(req, ";");
+
+        if (strcmp(type, "HSOSSTP_INITX") == 0) {
+            char *chunk_size_str = strtok(nullptr, ";");
+            char *file_name_str = strtok(nullptr, ";");
+
+            long chunk_size = strtol(chunk_size_str, nullptr, 10);
             long new_session_key = std::time(nullptr);
-            FILE *file = fopen(file_name, "r");
+
+            printf("REQUEST: %s\n", type);
+            printf("chunk_size: %ld\nfile_name: %s\n", chunk_size, file_name_str);
+
+            FILE *file = fopen(file_name_str, "rb");
             if (!file) {
                 const char *fnf_response = "HSOSSTP_ERROR;FNF";
-                sendto(sockfd, fnf_response, strlen(fnf_response), 0, (struct sockaddr *) &cli_addr, alen);
-                return;
+                sendto(sockfd,fnf_response,strlen(fnf_response),0,(struct sockaddr *) &cli_addr,alen);
+                printf("RESPONSE: %s\n", fnf_response);
+                continue;
             }
-            Session newSession = {new_session_key, fileno(file), chunk_size, chunk_no};
+
+            Session newSession;
+            newSession.fd = fileno(file);
+            newSession.chunk_size = chunk_size;
             sessions[new_session_key] = newSession;
-            char init_response[MAXLINE];
-            sprintf(init_response, "HSOSSTP_SIDXX;%li", new_session_key);
-            sendto(sockfd, init_response, sizeof(init_response), 0, (struct sockaddr *) &cli_addr, alen);
+
+            const char res_type[] = "HSOSSTP_SIDXX;";
+            std::string res = std::string(res_type) + std::to_string(new_session_key);
+
+            sendto(sockfd, res.data(), strlen(res.data()), 0, (struct sockaddr *) &cli_addr, alen);
+
+            printf("RESPONSE: HSOSSTP_SIDXX\n");
+            printf("new_session_key: %ld\n", new_session_key);
         }
 
-        // Format: HSOSSTP_GETXX;<session key>;<chunk no>
-        if (sscanf(in, "HSOSSTP_GETXX;%li;%i", &session_key, &chunk_no) > 0) {
-            printf("Session-Key: %li\n", session_key);
-            printf("Chunk no: %i\n", chunk_no);
+        if (strcmp(type, "HSOSSTP_GETXX") == 0) {
+            char *session_key_str = strtok(nullptr, ";");
+            char *chunk_no_str = strtok(nullptr, " ");
+
+            long session_key = strtol(session_key_str, nullptr, 10);
+            long chunk_no = strtol(chunk_no_str, nullptr, 10);
+
+            printf("REQUEST: %s\n", type);
+            printf("session_key: %ld\nchunk_no: %ld\n", session_key, chunk_no);
 
             if (sessions.find(session_key) == sessions.end()) {
                 const char *nos_response = "HSOSSTP_ERROR;NOS";
                 sendto(sockfd, nos_response, strlen(nos_response), 0, (struct sockaddr *) &cli_addr, alen);
-                return;
+                printf("RESPONSE: %s\n\n", nos_response);
+                continue;
             }
 
-            Session currSession = sessions.at(session_key);
+            Session session = sessions.at(session_key);
 
-            char data_buf[currSession.chunk_size];
-            size_t actual_chunk_size = 0;
+            char data[session.chunk_size];
+            long a_chunk_size = 0;
 
-            //lseek(currSession.fd, currSession.chunk_size * currSession.chunk_no, 0);
-            if ((actual_chunk_size = read(currSession.fd, data_buf, currSession.chunk_size)) > 0) {
-                char data_header[MAXLINE];
-                sprintf(data_header, "HSOSSTP_DATAX;%i;%li;", chunk_no, actual_chunk_size);
+            if ((a_chunk_size = read(session.fd, data, session.chunk_size)) > 0) {
+                const char res_type[] = "HSOSSTP_DATAX;";
+                std::string res_header = std::string(res_type) + std::to_string(chunk_no) + ";" + std::to_string(a_chunk_size) + ";";
 
-                unsigned long response_size = strlen(data_header) + actual_chunk_size;
-                char data_response[response_size];
+                char result[res_header.size() + a_chunk_size];
 
-                sprintf(data_response, "%s%s", data_header, data_buf);
+                for(int i = 0; i < res_header.size(); i++){
+                    result[i] = res_header.at(i);
+                }
 
-                //printf("%s\n", data_response);
+                for(int i = 0; i <= a_chunk_size; i++){
+                    result[i + res_header.size()] = data[i];
+                }
 
-                sendto(sockfd, data_response, response_size, 0, (struct sockaddr *) &cli_addr,
-                       alen);
+                sendto(sockfd, result, sizeof(result), 0, (struct sockaddr *) &cli_addr,alen);
+                printf("RESPONSE: HSOSSTP_DATAX\n");
+                printf("a_chunk_size: %ld\n\n", a_chunk_size);
+                //printf("%s\n\n", result);
             }
         }
     }
