@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <map>
 #include <ctime>
+#include <string>
 
 #define SRV_PORT 8998
 #define MAXLINE 2048
