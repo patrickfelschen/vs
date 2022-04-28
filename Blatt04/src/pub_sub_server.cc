@@ -6,7 +6,7 @@
 #include <memory>
 #include <string>
 #include <fstream>
-#include <set>
+#include <map>
 
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
@@ -40,7 +40,8 @@ using pubsub::Topic;
 class PubSubServiceImpl final : public PubSubService::Service
 {
   // TODO: Channel topic und Subscribers für diesen Server merken
-  // ...
+  std::string topic;
+  std::set<std::string> subscribers;
 
   static std::string stringify(const SubscriberAddress &adr)
   {
@@ -49,22 +50,35 @@ class PubSubServiceImpl final : public PubSubService::Service
     return s;
   }
 
-  Status subscribe(ServerContext *context, const SubscriberAddress *request,
-                   ReturnCode *reply) override
+  Status subscribe(ServerContext *context, const SubscriberAddress *request, ReturnCode *reply) override
   {
     std::string receiver = stringify(*request);
     // TODO: Client registrieren und Info ausgeben
-    // ...
+
+    if(subscribers.find(receiver) == subscribers.end()){
+      std::cout << "[SUBSCRIBE] " << receiver << std::endl;
+      subscribers.insert(receiver);
+      reply->set_value(ReturnCode::OK);
+    }else{
+      reply->set_value(ReturnCode::CLIENT_ALREADY_REGISTERED);
+    }
  
     return Status::OK;
   }
 
-  Status unsubscribe(ServerContext *context, const SubscriberAddress *request,
-                     ReturnCode *reply) override
+  Status unsubscribe(ServerContext *context, const SubscriberAddress *request, ReturnCode *reply) override
   {
+    std::string receiver = stringify(*request);
     // TODO: Client austragen und Info ausgeben
-    // ...
 
+    if(subscribers.find(receiver) != subscribers.end()){
+      std::cout << "[UNSUBSCRIBE] " << receiver << std::endl;
+      subscribers.erase(receiver);
+      reply->set_value(ReturnCode::OK);
+    }else{
+      reply->set_value(ReturnCode::CANNOT_UNREGISTER);
+    }
+ 
     return Status::OK;
   }
 
@@ -72,29 +86,50 @@ class PubSubServiceImpl final : public PubSubService::Service
   {
     // Status auswerten -> deliver() gibt keinen Status zurück,k deshalb nur RPC Fehler melden.
     if (!status.ok()) {
-      std::cout << "[ RPC error: " << status.error_code() << " (" << status.error_message()
-                << ") ]" << std::endl;
+      std::cout 
+      << "[RPC error: " 
+      << status.error_code() 
+      << " (" << status.error_message()
+      << ")] " 
+      << operation
+      << std::endl;
     }
   }
 
-  Status publish(ServerContext *context, const Message *request,
-                 ReturnCode *reply) override
+  Status publish(ServerContext *context, const Message *request, ReturnCode *reply) override
   {
     // TODO: Nachricht an alle Subscriber verteilen
-    // for (subscriber in subscribers) { 
-    //    status = subscriber.deliver(request,  reply);
-    //    handle_status(status, reply); 
-    // }
+    for (std::string subscriber: subscribers) {
+      std::shared_ptr<Channel> channel = grpc::CreateChannel(subscriber, grpc::InsecureChannelCredentials());
+      stub_ = PubSubDelivService::NewStub(channel);
+    
+      ClientContext srv_context;
+      Message srv_request;
+      EmptyMessage srv_reply;
 
-    return Status::OK;
+      srv_request.set_message("<" + topic + "> " + request->message());
+
+      std::cout << "[PUBLISH] \"" << request->message() << "\" to " << subscriber << std::endl;
+
+      Status status = stub_->deliver(&srv_context, srv_request, &srv_reply);
+      handle_status(subscriber, status);
+    }
+
+    reply->set_value(ReturnCode::OK);
+    return Status::OK; 
   }
 
-  Status set_topic(ServerContext *context, const Topic *request,
-                     ReturnCode *reply) override
+  Status set_topic(ServerContext *context, const Topic *request, ReturnCode *reply) override
   {
     // TODO: Topic setzen und Info ausgeben
-    // ...
-
+    if(request->passcode() == PASSCODE){
+      topic = request->topic();
+      reply->set_value(ReturnCode::OK);
+      std::cout << "[SET_TOPIC] " << topic << std::endl;
+    }else{
+      std::cout << "[SET_TOPIC] Fehlgeschlagen" << std::endl;
+      reply->set_value(ReturnCode::CANNOT_SET_TOPIC);
+    }
     return Status::OK;
   }
 
@@ -102,8 +137,11 @@ public:
   PubSubServiceImpl()
   {
     // TODO: Topic initialisieren
-    //    topic = "<no topic set>";
+    topic = "no topic set";
   }
+
+private:
+    std::unique_ptr<PubSubDelivService::Stub> stub_;
 };
 
 void RunServer()

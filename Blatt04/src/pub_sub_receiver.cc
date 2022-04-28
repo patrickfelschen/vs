@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 #include <fstream>
+#include <ctime>
 
 #include <grpcpp/grpcpp.h>
 #include <grpcpp/health_check_service_interface.h>
@@ -28,11 +29,23 @@ using pubsub::PubSubDelivService;
 
 // Implementierung des Service
 class PubSubDelivServiceImpl final : public PubSubDelivService::Service {
-  Status deliver(ServerContext* context, const Message* request,
-                EmptyMessage* reply) override {
+  Status deliver(ServerContext* context, const Message* request, EmptyMessage* reply) override {
 
     // TODO: Zeitstempel erzeugen und zusammen mit Nachricht ausgeben.
-    // ...
+    std::time_t t = std::time(0);
+    std::tm* now = std::localtime(&t);
+
+    std::cout 
+        << "["
+        << (now->tm_year + 1900) << '-' 
+        << (now->tm_mon + 1) << '-'
+        << (now->tm_mday) << ' '
+        << (now->tm_hour) << ':'
+        << (now->tm_min) << ':'
+        << (now->tm_sec)
+        << "] "
+        << request->message()
+        << std::endl;
   
     return Status::OK;
   }
@@ -40,7 +53,7 @@ class PubSubDelivServiceImpl final : public PubSubDelivService::Service {
 
 void RunServer() {
   // Server auf dem lokalen Host starten.
-  std::string server_address("0.0.0.0:40041");
+  std::string server_address("0.0.0.0:44441");
   PubSubDelivServiceImpl service;
 
   grpc::EnableDefaultHealthCheckService(true);

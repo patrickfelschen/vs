@@ -8,6 +8,12 @@
 #include <memory>
 #include <string>
 
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <netinet/in.h>
+#include <net/if.h>
+#include <arpa/inet.h>
+
 #include <stdio.h>
 #include <grpcpp/grpcpp.h>
 
@@ -17,6 +23,7 @@
 #include "pub_sub_config.h"
 
 #include <unistd.h>
+
 
 // Notwendige gRPC Klassen im Client.
 using grpc::Channel;
@@ -52,13 +59,13 @@ void trim(std::string &s)
 class Args
 {
 public:
-    std::string target;
+    std::string target; 
     
     Args(int argc, char **argv)
     {
         target = PUBSUB_SERVER_IP; 
         target += ":";
-        target += std::to_string (PUBSUB_SERVER_PORT);
+        target += std::to_string(PUBSUB_SERVER_PORT);
 
         // Endpunkt des Aufrufs ueber --target eingestellt?
         std::string arg_str("--target");
@@ -89,7 +96,19 @@ static std::string get_receiver_ip() {
     // Dann aber: alle Adapter und die dafuer vorgesehenen IP Adresse durchgehen; 
     // eine davon auswaehlen. Das funktioniert aber auch nur im lokalen Netz.
     // Was ist wenn NAT verwendet wird? Oder Proxies? 
-    return PUBSUB_RECEIVER_IP;
+    int fd;
+    struct ifreq ifr;
+
+    fd = socket(AF_INET, SOCK_DGRAM, 0);
+    ifr.ifr_addr.sa_family = AF_INET;
+
+    strncpy(ifr.ifr_name, "enp0s25", IFNAMSIZ-1);
+
+    ioctl(fd, SIOCGIFADDR, &ifr);
+
+    close(fd);
+
+    return inet_ntoa(((struct sockaddr_in *)&ifr.ifr_addr)->sin_addr);
 }
 
 class PubSubClient
@@ -110,7 +129,28 @@ private:
 
     static std::string stringify(pubsub::ReturnCode_Values value)
     {
-        /* TODO: Hier sollte eine passende Status-Ausgabe generiert werden! */
+        /* TODO: Hier sollte eine passende Status-Ausgabe generiert werden! */ 
+        switch (value) {
+            case ReturnCode::OK:
+                return "OK";
+                break;
+            case ReturnCode::CANNOT_REGISTER:
+                return "CANNOT_REGISTER";
+                break;
+            case ReturnCode::CLIENT_ALREADY_REGISTERED:
+                return "CLIENT_ALREADY_REGISTERED";
+                break;
+            case ReturnCode::CANNOT_UNREGISTER:
+                return "CANNOT_UNREGISTER";
+                break;
+            case ReturnCode::CANNOT_SET_TOPIC:
+                return "CANNOT_SET_TOPIC";
+                break;
+            case ReturnCode::UNKNOWN_ERROR:
+                return "UNKNOWN_ERROR";
+                break;
+        }
+
         return "UNKNOWN";
     }
 
@@ -129,8 +169,7 @@ private:
     }
 
 public:
-    PubSubClient(std::shared_ptr<Channel> channel)
-        : stub_(PubSubService::NewStub(channel))
+    PubSubClient(std::shared_ptr<Channel> channel) : stub_(PubSubService::NewStub(channel))
     {
     }
 
@@ -150,7 +189,7 @@ public:
             getline(std::cin, cmd);
             // std::cin >> cmd;
             if (cmd.length() == 0)
-                break;
+                continue;
 
             trim(cmd);
 
@@ -178,8 +217,11 @@ public:
                 ClientContext context;
                
                 // TODO: Topic fuer Server vorbereiten ...
+                request.set_topic(topic);
+                request.set_passcode(passcode);
 
                 // TODO: RPC abschicken ...
+                stub_->set_topic(&context, request, &reply);
                 
                 // Status / Reply behandeln
                 Status status;
@@ -203,19 +245,26 @@ public:
                         /* verhaelt sich das Terminal anders. */
                         /* Alternative: Aufruf von xterm ueber ein Shell-Skript. */
                         /* Allerdings haette man dann 2 Kind-Prozesse. */
-                        execl("/usr/bin/xterm", "Receiver", "-fs", "14", receiverExecFile, (char *)NULL);
+                        //execl("/usr/bin/xterm", "Receiver", "-fs", "14", receiverExecFile, (char *)NULL);
                         /* -fs 14 wird leider ignoriert! */
                         exit(0); /* Kind beenden */
                     }
                     
                     /* TODO: Hier den Request verschicken und Ergebnis auswerten! */
                     /* Platzhalter wie oben lokal erstellen ... */
-
+                    SubscriberAddress request;
+                    ReturnCode reply;
+                    ClientContext context;
                     // TODO: Receiver Adresse setzen ...
+                    request.set_ip_address(get_receiver_ip());
+                    request.set_port(PUBSUB_RECEIVER_PORT);
 
                     // TODO: RPC abschicken ...
+                    stub_->subscribe(&context, request, &reply);
 
                     // TODO: Status / Reply behandeln ...
+                    Status status;
+                    this->handle_status("subscribe()", status, reply);
                 }
                 else
                 {
@@ -238,15 +287,22 @@ public:
                 }
                 /* Bei quit muss ebenfalls ein unsubscribe() gemacht werden. */
                                
-                
                 /* TODO: Hier den Request verschicken und Ergebnis auswerten! */
                 /* Platzhalter wie oben lokal erstellen ... */
+                SubscriberAddress request;
+                ReturnCode reply;
+                ClientContext context;
 
                 // TODO: Receiver Adresse setzen ...
+                request.set_ip_address(get_receiver_ip());
+                request.set_port(PUBSUB_RECEIVER_PORT);
 
                 // TODO: RPC abschicken ...
+                stub_->unsubscribe(&context, request, &reply);
 
                 // TODO: Status / Reply behandeln ...
+                Status status;
+                this->handle_status("unsubscribe()", status, reply);
 
                 /* Shell beenden nur bei quit */
                 if (cmd.compare("quit") == 0)
@@ -256,12 +312,16 @@ public:
             {
                 /* TODO: Hier den Request verschicken und Ergebnis auswerten! */
                 /* Platzhalter wie oben lokal erstellen ... */
-
+                ClientContext context;
+                Message request;
+                ReturnCode reply;
                 // TODO: Message setzen ...
-
+                request.set_message(cmd);
                 // TODO: RPC abschicken ...
-
+                stub_->publish(&context, request, &reply);
                 // TODO: Status / Reply behandeln ...
+                Status status;
+                this->handle_status("publish()", status, reply);
             }
         } while (1);
     }

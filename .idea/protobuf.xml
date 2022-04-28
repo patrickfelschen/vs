@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="BufFileManager">
+    <modules>
+      <module>
+        <dependencies>
+          <set>
+            <option value="buf.build/beta/opencensus" />
+            <option value="buf.build/beta/opentelemetry" />
+            <option value="buf.build/beta/prometheus" />
+            <option value="buf.build/beta/xds" />
+            <option value="buf.build/gogo/protobuf" />
+            <option value="buf.build/googleapis/googleapis:d1a849b8f8304950832335723096e954" />
+          </set>
+        </dependencies>
+        <lockedDependencies>
+          <dependency>
+            <commit>5f5f8259293649d68707d2e5b6285748</commit>
+            <owner>beta</owner>
+            <remote>buf.build</remote>
+            <repository>opencensus</repository>
+          </dependency>
+          <dependency>
+            <commit>549da630ffe24b53be3983fcee3bb346</commit>
+            <owner>beta</owner>
+            <remote>buf.build</remote>
+            <repository>opentelemetry</repository>
+          </dependency>
+          <dependency>
+            <commit>a91b42d18a994cd4b07b37f365f87cf9</commit>
+            <owner>beta</owner>
+            <remote>buf.build</remote>
+            <repository>prometheus</repository>
+          </dependency>
+          <dependency>
+            <commit>82388a0a0cb04e98a203f95dfed5e84b</commit>
+            <owner>beta</owner>
+            <remote>buf.build</remote>
+            <repository>protoc-gen-validate</repository>
+          </dependency>
+          <dependency>
+            <commit>45f850b92541434cbde4aece01bc7d53</commit>
+            <owner>beta</owner>
+            <remote>buf.build</remote>
+            <repository>xds</repository>
+          </dependency>
+          <dependency>
+            <commit>4df00b267f944190a229ce3695781e99</commit>
+            <owner>gogo</owner>
+            <remote>buf.build</remote>
+            <repository>protobuf</repository>
+          </dependency>
+          <dependency>
+            <commit>d1a849b8f8304950832335723096e954</commit>
+            <owner>googleapis</owner>
+            <remote>buf.build</remote>
+            <repository>googleapis</repository>
+          </dependency>
+        </lockedDependencies>
+        <path>$PROJECT_DIR$/Blatt04/src/grpc/third_party/envoy-api</path>
+        <yaml>$PROJECT_DIR$/Blatt04/src/grpc/third_party/envoy-api/buf.yaml</yaml>
+      </module>
+    </modules>
+  </component>
+</project>
