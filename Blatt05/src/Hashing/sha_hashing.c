@@ -139,8 +139,12 @@ int main(int argc, char** argv) {
     s_getline(pwd, PWDLEN, stdin);
     char* hash_val = hash_user_pwd(user, pwd);
     printf("%s %s\n", user, hash_val);
-    free(hash_val);
     /* ... koennte anschließend in Hash-Digest eingefuegt werden ... */
+    FILE* hash_file = fopen("hashes.txt", "a");
+    fprintf(hash_file, "%s %s\n", user, hash_val);
+    fclose(hash_file);
+    free(hash_val);
+
     return EXIT_SUCCESS;
 }
 
