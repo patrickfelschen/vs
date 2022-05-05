@@ -60,13 +60,14 @@ int main(int argc, char *argv[]) {
     _exit(0);
 }
 
-
-/* handle_answer: Lesen von Daten vom Socket und an den Client zuruecksenden
- *
+/*
  * HSOSSTP_INITX;<chunk size>;<filename>
  * HSOSSTP_SIDXX;<session key>
  * HSOSSTP_GETXX;<session key>;<chunk no>
  * HSOSSTP_DATAX;<chunk no>;<actual chunk size>;<data>
+ * HSOSSTP_ERROR;FNF
+ * HSOSSTP_ERROR;CNF
+ * HSOSSTP_ERROR;NOS
 */
 void handle_answer(int sockfd, struct sockaddr *srv_addr, int srv_len) {
     char res[MAXLINE];

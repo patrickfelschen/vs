@@ -10,6 +10,7 @@
 #include <netinet/in.h>
 #include <map>
 #include <ctime>
+#include <string>
 
 #define SRV_PORT 8998
 #define MAXLINE 2048
@@ -47,7 +48,7 @@ struct Session {
 
 std::map<long, Session> sessions;
 
-/* handle_request: Lesen von Daten vom Socket und an den Client zuruecksenden
+/*
  * HSOSSTP_INITX;<chunk size>;<filename>
  * HSOSSTP_SIDXX;<session key>
  * HSOSSTP_GETXX;<session key>;<chunk no>
@@ -140,6 +141,11 @@ void handle_request(int sockfd) {
                 printf("RESPONSE: HSOSSTP_DATAX\n");
                 printf("a_chunk_size: %ld\n\n", a_chunk_size);
                 //printf("%s\n\n", result);
+            }
+
+            if (a_chunk_size < session.chunk_size) {
+                // Sitzung Terminieren
+                sessions.erase(session_key);
             }
         }
     }
