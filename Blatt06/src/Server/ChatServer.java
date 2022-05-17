@@ -1,3 +1,8 @@
+package Server;
+
+import Client.ClientProxy;
+import Connection.ChatProxy;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
