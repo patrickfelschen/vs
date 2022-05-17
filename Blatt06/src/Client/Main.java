@@ -17,6 +17,10 @@ public class Main {
     private ChatServer chatServer;
     private ChatProxy chatProxy;
 
+    /**
+     * Im Konstruktor wird die Registry mit dem Standardport gesucht
+     * Anschliessend wird der Server unter dem Namen "ChatServer" aus der Registry ausgelesen
+     */
     Main() {
         try {
             this.registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
@@ -27,6 +31,12 @@ public class Main {
         }
     }
 
+    /**
+     *  Bei gültigem Input wird ein neuer Client-Proxy erstellt, welcher im Chat-Proxy als Kommunikationsschnittstelle für den Nachrichtenaustausch dient (Nachrichten ausgeben).
+     *  Über das zurückgelieferte ChatProxy Element aus der subscribeUser() Funktion des Servers, wird eine Kommunikation zwischen Server und Client ermöglicht (Nachrichten verteilen).
+     * @param input Nutzername
+     * @return Anmeldestatus
+     */
     private boolean readLogin(String input) {
         ClientProxyImpl clientProxy = new ClientProxyImpl();
         try {
@@ -51,6 +61,10 @@ public class Main {
             return true;
         }
     }
+
+    /**
+     * Die Server-Funktion unsubscribeUser() wird ausgeführt, wodurch der Nutzer aus der Liste der aktiven Verbindungen ausgetragen wird.
+     */
     private void unsubscribe() {
         if(!loggedIn) {
             System.out.println("Sie sind nicht angemeldet");
@@ -72,6 +86,10 @@ public class Main {
         }
     }
 
+    /**
+     * Ist der Nutzer angemeldet, lassen sich über den zuvor im Login erstellten ChatProxy Nachrichten versenden.
+     * @param message Zu versendende Nachricht
+     */
     private void sendMessage(String message) {
         if(!loggedIn) {
             System.out.println("Sie sind nicht angemeldet");
@@ -83,6 +101,10 @@ public class Main {
             }
         }
     }
+
+    /**
+     * Übersicht der Verfuegbaren Befehle.
+     */
     private void printHelp() {
         System.out.println("- Moegliche Befehle: ");
         System.out.println("- subscribe");
