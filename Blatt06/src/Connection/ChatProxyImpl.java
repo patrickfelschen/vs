@@ -1,9 +1,9 @@
 package Connection;
 
-import Client.ClientProxy;
 import Server.ChatServerImpl;
 
 import java.rmi.RemoteException;
+import java.util.HashMap;
 
 public class ChatProxyImpl implements ChatProxy {
     private ChatServerImpl chatServer;
@@ -25,8 +25,19 @@ public class ChatProxyImpl implements ChatProxy {
      */
     @Override
     public void sendMessage(String message) throws RemoteException {
-        for(ClientProxy proxy : chatServer.getActiveChats().values()) {
-            proxy.receiveMessage(this.username, message);
-        }
+        new HashMap<>(chatServer.getActiveChats()).forEach((username, clientProxy) -> {
+            try {
+                if(!this.username.equals(username)) {
+                    clientProxy.receiveMessage(this.username, message);
+                }
+            } catch (RemoteException e) {
+                try {
+                    chatServer.unsubscribeUser(username);
+                } catch (RemoteException ex) {
+                    throw new RuntimeException(ex);
+                }
+                System.out.println(this.username + " konnte nicht erreicht werden.");
+            }
+        });
     }
 }

@@ -10,7 +10,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.Scanner;
 
-public class Main {
+public class ChatClient {
     private boolean loggedIn;
     private String currentUser;
     private Registry registry;
@@ -21,9 +21,9 @@ public class Main {
      * Im Konstruktor wird die Registry mit dem Standardport gesucht
      * Anschliessend wird der Server unter dem Namen "ChatServer" aus der Registry ausgelesen
      */
-    Main() {
+    ChatClient() {
         try {
-            this.registry = LocateRegistry.getRegistry(Registry.REGISTRY_PORT);
+            this.registry = LocateRegistry.getRegistry(12345);
             this.chatServer = (ChatServer) registry.lookup("ChatServer");
             this.chatProxy = null;
         } catch (RemoteException | NotBoundException e) {
@@ -37,7 +37,7 @@ public class Main {
      * @param input Nutzername
      * @return Anmeldestatus
      */
-    private boolean readLogin(String input) {
+    private boolean subscribe(String input) {
         ClientProxyImpl clientProxy = new ClientProxyImpl();
         try {
             ClientProxy handle = (ClientProxy) UnicastRemoteObject.exportObject(clientProxy, 0);
@@ -54,7 +54,6 @@ public class Main {
             System.out.println("Anmelden fehlgeschlagen");
             return false;
         }else {
-            System.out.println("Anmelden erfolgreich");
             System.out.println("<unsubscribe> zum Abmelden - Texteingabe zum Nachricht abschicken");
             this.loggedIn = true;
             this.currentUser = input;
@@ -97,7 +96,7 @@ public class Main {
             try {
                 chatProxy.sendMessage(message);
             } catch (RemoteException e) {
-                throw new RuntimeException(e);
+                System.out.println("Nachricht konnte nicht zugestellt werden.");
             }
         }
     }
@@ -114,33 +113,33 @@ public class Main {
 
     }
     public static void main(String[] args) {
-        Main main = new Main();
+        ChatClient chatClient = new ChatClient();
         Scanner scanner = new Scanner(System.in);
 
         System.out.println("Bitte Namen zum Anmelden angeben: ");
         String username = scanner.nextLine();
 
-        if(main.readLogin(username)) {
+        if(chatClient.subscribe(username)) {
             while(true){
                 String userInput = scanner.nextLine();
 
                 if(userInput.equals("exit") || userInput.equals("unsubscribe")) {
-                    main.unsubscribe();
+                    chatClient.unsubscribe();
 
                     if(userInput.equals("exit")) {
                         System.exit(0);
                     }
                 }
                 else if(userInput.equals("help")) {
-                    main.printHelp();
+                    chatClient.printHelp();
                 }
                 else if(userInput.equals("subscribe")) {
                     System.out.println("Bitte Namen zum Anmelden angeben: ");
 
-                    main.readLogin(scanner.nextLine());
+                    chatClient.subscribe(scanner.nextLine());
                 }
                 else {
-                    main.sendMessage(userInput);
+                    chatClient.sendMessage(userInput);
                 }
             }
         }

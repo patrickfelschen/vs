@@ -4,8 +4,6 @@ import Connection.ChatProxyImpl;
 import Client.ClientProxy;
 import Connection.ChatProxy;
 
-
-import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -15,8 +13,12 @@ import java.util.Map;
 
 public class ChatServerImpl extends UnicastRemoteObject implements ChatServer {
     private Map<String, ClientProxy> chatProxyList = new HashMap<>();
+    private ChatProxy serverChatProxy;
 
     protected ChatServerImpl() throws RemoteException {
+        //System.setProperty("java.security.policy","file:/C:/Users/julia/IdeaProjects/vs/Blatt06/src/timer.policy");
+        ChatProxyImpl chatProxyImpl = new ChatProxyImpl(this, "Server");
+        serverChatProxy = (ChatProxy) UnicastRemoteObject.exportObject(chatProxyImpl, 0);
     }
 
     /**
@@ -34,6 +36,7 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServer {
         chatProxyList.put(username, handle);
 
         System.out.println("[SUBSCRIBE] " + username + " subscribed");
+        this.serverChatProxy.sendMessage(username + " ist jetzt online");
 
         return chatProxy;
     }
@@ -53,6 +56,7 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServer {
 
         if(status) {
             System.out.println("[UNSUBSCRIBE] " + username + " unsubscribed");
+            this.serverChatProxy.sendMessage(username + " ist jetzt offline");
         }
 
         return status;
@@ -65,7 +69,7 @@ public class ChatServerImpl extends UnicastRemoteObject implements ChatServer {
      * @throws RemoteException
      */
     public static void main(String[] args) throws RemoteException {
-        Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);;
+        Registry registry = LocateRegistry.createRegistry(12345);;
         ChatServerImpl chatServer = new ChatServerImpl();
 
         registry.rebind("ChatServer", chatServer);
