@@ -1,6 +1,6 @@
 package servlets;
 
-import de.hsos.vs.web.util.HtmlTemplateLoader;
+import util.HtmlTemplateLoader;
 import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
