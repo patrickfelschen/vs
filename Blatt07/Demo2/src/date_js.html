@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Einfaches JavaScript-Beispiel</title>       
+    </head>
+    <body style="font-family:arial;">
+        <h2>Einfaches JavaScript-Beispiel</h2>
+        <script type="text/javascript">
+            var Jetzt = new Date();
+            var Tag = Jetzt.getDate();
+            var Monat = Jetzt.getMonth() + 1;
+            var Jahr = Jetzt.getYear();
+            var Stunden = Jetzt.getHours();
+            var Minuten = Jetzt.getMinutes();
+            var NachVoll = ((Minuten < 10) ? ":0" : ":");
+            document.write("Guten Tag!<p>Heute ist der <b>"
+                    + Tag + "." + Monat + "." + Jahr + "<\/b>. Es ist jetzt <b>"
+                    + Stunden + NachVoll + Minuten + " Uhr<\/b>.");
+        </script>
+    </body>
+</html>

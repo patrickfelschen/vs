@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Greift auf 'echo' WebSocket zu. Standard-URI des Tomcat Sockets. -->
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+    <head>
+        <title>WebSocket Test (Echo)</title>
+        <style type="text/css"><![CDATA[
+            #element-container {
+                margin-left: 5px;
+                width: 500px;
+            }
+
+            #element-container div {
+                padding-bottom: 5px;
+            }
+            
+            #logger {
+                border: 1px solid #CCCCCC;
+                border-right-color: #999999;
+                border-bottom-color: #999999;
+                height: 170px;
+                overflow-y: scroll;
+                width: 100%;
+            }
+
+            #logger p {
+                padding: 2px;
+                margin: 2px;
+            }
+            ]]></style>
+            
+        <script type="application/javascript"><![CDATA[
+            "use strict";
+            /* Wird von Apache Tomcat bereitgestellt. */
+            var wsURI = '';
+            var output;
+            var logger;
+            var websocket;
+            
+            var conntect = false;
+            
+            function setConnected(connected) {
+                document.getElementById('connect').disabled = connected;
+                document.getElementById('disconnect').disabled = !connected;
+                document.getElementById('send').disabled = !connected;
+            }
+            function init() {
+                wsURI = 'ws://' + 'localhost:8080/' + "examples/websocket/echoProgrammatic";
+                document.getElementById('target').value = wsURI;
+                output = document.getElementById('output');
+                logger = document.getElementById('logger');
+                setConnected (false);
+            }
+            function doConnect() {
+                wsURI = document.getElementById('target').value;
+                if ('WebSocket' in window) {
+                    websocket = new WebSocket(wsURI);
+                } else if ('MozWebSocket' in window) {
+                    websocket = new MozWebSocket(wsURI);
+                } else {
+                    alert('WebSocket is not supported by this browser.');
+                    return;
+                }   
+                websocket.onopen = function (evt) {
+                    log('CONNECTED');
+                    setConnected (true);
+                };
+                websocket.onclose = function (evt) {
+                    log('DISCONNECTED');
+                    websocket = null;
+                    setConnected (false);
+                };
+                websocket.onmessage = function (evt) {
+                    log('RESPONSE: ' + evt.data);
+                };
+                websocket.onerror = function (evt) {
+                    log('ERROR: code = ' + evt.code +', reason = ' + evt.reason);
+                };
+            }
+            function doUnconnect() {
+                if (websocket != null) {
+                    document.getElementById('message');
+                    websocket.close();
+                }
+                else {
+                    alert('Unable to disconnect. No WebSocket connection.');
+                }
+            }
+            function doSend()
+            {
+                if (websocket != null) {
+                    var message = document.getElementById('message').value;
+                    log("SENT: " + message);
+                    websocket.send(message);
+                }
+                else {
+                    alert('No WebSocket connection. Please connect first.');
+                }
+            }
+            function log(message)
+            {
+                var p = document.createElement('p');
+                p.style.wordWrap = 'break-word';
+                p.appendChild(document.createTextNode(message));
+                logger.appendChild(p);
+                while (logger.childNodes.length > 40) {
+                    logger.removeChild(logger.firstChild);
+                }
+                logger.scrollTop = logger.scrollHeight;
+            }
+            window.addEventListener("load", init, false);
+            document.addEventListener("DOMContentLoaded", function() {
+            // Fuer Warnung bei fehlendem JS. <noscript> nicht erlaubt in XHTML.
+            var noscripts = document.getElementsByClassName("noscript");
+                for (var i = 0; i < noscripts.length; i++) {
+                    noscripts[i].parentNode.removeChild(noscripts[i]);
+                }
+            }, false);
+        ]]></script>
+    </head>
+    <body style="font-family:arial;">
+        <div class="noscript"><h2 style="color: #ff0000">Javascript bitte einschalten und Seite neu laden!</h2></div>
+        <h2>WebSocket Test (Echo)</h2>
+        <div id="element-container">
+            <div> <div><b>WebSocket URI: </b></div>
+            <input id="target" type="text" size="40" style="width: 360px"/>
+            <button id="connect" style="width: 60px" onclick="doConnect();">Link</button>
+            <button id="disconnect" style="width: 60px" onclick="doUnconnect();">Unlink</button>
+            </div>
+        </div>
+
+        <div id="element-container">
+            <div> <div><b>Message: </b></div>
+            <input id="message" type="text" size="40" style="width: 360px"/>
+            <button id="send" style="width: 60px" onclick="doSend();">Send</button>
+            </div>
+        </div>
+        
+        <div id="element-container">
+            <div> <b>Log:</b> </div>
+            <div id="logger"/>
+        </div>
+    </body>
+</html>
+
+
