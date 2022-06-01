@@ -19,12 +19,11 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 
 @WebServlet(name = "clientServlet", value = "/client-servlet")
-public class ClientServlet extends HttpServlet implements ClientProxy {
+public class ClientServlet extends HttpServlet {
   private Registry registry;
   private ChatServer chatServer;
   private HttpSession session;
   private String username;
-  private List<String> messages;
   private boolean loggedIn;
 
   enum SubscibeStatus{ SUCCESS, EXISTS, SERVERNOTFOUND, ERROR }
@@ -61,14 +60,15 @@ public class ClientServlet extends HttpServlet implements ClientProxy {
 
     SubscibeStatus subscribeStatus;
     session = req.getSession(true);
-    messages = new ArrayList<>();
+
+    ClientProxyServletImpl clientProxy = (ClientProxyServletImpl) session.getAttribute("ClientProxy");
 
     if(req.getParameter("subscibe") != null) {
       username = req.getParameter("username");
       session.setAttribute("username", username);
       subscribeStatus = subscribe();
     }else{
-      messages = (ArrayList<String>) session.getAttribute("messages");
+      clientProxy.setMessages((ArrayList<String>) session.getAttribute("messages"));
       subscribeStatus = SubscibeStatus.SUCCESS;
     }
 
@@ -122,8 +122,8 @@ public class ClientServlet extends HttpServlet implements ClientProxy {
         out.println("<input type=\"text\" name=\"message\" id=\"message\">");
         out.println("<button type=\"submit\" name=\"send\">Senden</button>");
         out.println("<br><textarea name=\"chatoutput\" cols=\"50\" rows=\"10\" readonly>");
-        if(messages != null) {
-          for (String m : messages) {
+        if(clientProxy != null) {
+          for (String m : clientProxy.getMessages()) {
             out.println(m);
           }
         }
@@ -158,12 +158,13 @@ public class ClientServlet extends HttpServlet implements ClientProxy {
       return SubscibeStatus.EXISTS;
     }
 
-    ClientProxyImpl clientProxy = new ClientProxyImpl();
+    ClientProxyServletImpl clientProxy = new ClientProxyServletImpl();
 
     try {
-      ClientProxy handle = (ClientProxy) UnicastRemoteObject.exportObject(this, 0);
+      ClientProxy handle = (ClientProxy) UnicastRemoteObject.exportObject(clientProxy, 0);
       ChatProxy chatProxy = chatServer.subscribeUser(username, handle);
       this.session.setAttribute("ChatProxy", chatProxy);
+      this.session.setAttribute("ClientProxy", clientProxy);
     } catch (RemoteException e) {
       return SubscibeStatus.SERVERNOTFOUND;
     }
@@ -208,12 +209,6 @@ public class ClientServlet extends HttpServlet implements ClientProxy {
     }
 
     return SendMessageStatus.SUCCESS;
-  }
-
-  @Override
-  public void receiveMessage(String username, String message) throws RemoteException {
-    messages.add(username + ": " + message);
-    session.setAttribute("messages", messages);
   }
 
   @Override
