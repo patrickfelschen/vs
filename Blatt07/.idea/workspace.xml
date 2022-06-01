@@ -9,11 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d9f795bc-a5af-4e2c-9331-3a4e60c85703" name="Changes" comment="servlet">
-      <change afterPath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Servlets/ClientProxyServletImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Servlets/ClientServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Servlets/ClientServlet.java" afterDir="false" />
-    </list>
+    <list default="true" id="d9f795bc-a5af-4e2c-9331-3a4e60c85703" name="Changes" comment="servlet" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -79,6 +75,7 @@
       <updated>1654081568344</updated>
       <workItem from="1654081569830" duration="19517000" />
       <workItem from="1654104713699" duration="68000" />
+      <workItem from="1654104946760" duration="425000" />
     </task>
     <task id="LOCAL-00001" summary="servlet">
       <created>1654102513661</created>
@@ -87,7 +84,14 @@
       <option name="project" value="LOCAL" />
       <updated>1654102513661</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="servlet">
+      <created>1654105485438</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1654105485438</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
