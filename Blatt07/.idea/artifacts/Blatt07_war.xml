@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="Blatt07:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>Blatt07</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="Blatt07-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="Blatt07:war exploded" />
+    </root>
+  </artifact>
+</component>
