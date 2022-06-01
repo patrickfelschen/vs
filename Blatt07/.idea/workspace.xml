@@ -9,8 +9,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d9f795bc-a5af-4e2c-9331-3a4e60c85703" name="Changes" comment="servlet">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+    <list default="true" id="d9f795bc-a5af-4e2c-9331-3a4e60c85703" name="Changes" comment="gitignore fix">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -78,7 +77,7 @@
       <updated>1654081568344</updated>
       <workItem from="1654081569830" duration="19517000" />
       <workItem from="1654104713699" duration="68000" />
-      <workItem from="1654104946760" duration="974000" />
+      <workItem from="1654104946760" duration="1276000" />
     </task>
     <task id="LOCAL-00001" summary="servlet">
       <created>1654102513661</created>
@@ -101,7 +100,21 @@
       <option name="project" value="LOCAL" />
       <updated>1654105931925</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="gitignore fix">
+      <created>1654106362870</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1654106362870</updated>
+    </task>
+    <task id="LOCAL-00005" summary="gitignore fix">
+      <created>1654106369869</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1654106369869</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -120,6 +133,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="servlet" />
-    <option name="LAST_COMMIT_MESSAGE" value="servlet" />
+    <MESSAGE value="gitignore fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="gitignore fix" />
   </component>
 </project>
