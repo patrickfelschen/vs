@@ -1,4 +1,4 @@
-package de.hsos.vs.Servlets;
+package de.hsos.vs.Client;
 
 import java.io.*;
 import java.rmi.NotBoundException;
@@ -7,11 +7,7 @@ import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import de.hsos.vs.Client.ClientProxy;
-import de.hsos.vs.Client.ClientProxyImpl;
 import de.hsos.vs.Connection.ChatProxy;
 import de.hsos.vs.Server.ChatServer;
 import jakarta.servlet.ServletException;

@@ -1,4 +1,4 @@
-package de.hsos.vs.Servlets;
+package de.hsos.vs.Client;
 
 import de.hsos.vs.Client.ClientProxy;
 
