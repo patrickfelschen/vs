@@ -53,12 +53,25 @@ function getHtmlHttpRequest(url) {
     xmlhttp.send(null);
 }
 
+// https://stackoverflow.com/questions/24468459/sending-a-json-to-server-and-retrieving-a-json-in-return-without-jquery
 function getxyzHttpRequest(url) {
     // TO BE IMPLEMENTED!!!
 }
 
 function postHttpRequest(url) {
     // TO BE IMPLEMENTED!!!
+    var xmlhttp = new XMLHttpRequest();
+    var content = document.getElementById("contents").value;
+    xmlhttp.open("POST", url, true);
+    xmlhttp.setRequestHeader("Content-Type", "application/json");
+    xmlhttp.onreadystatechange = function () {
+        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
+            var json = JSON.parse(xmlhttp.responseText);
+            console.log(json);
+        }
+    };
+    var json = JSON.stringify(content);
+    xmlhttp.send(json);
 }
 
 function putHttpRequest(url, id) {
