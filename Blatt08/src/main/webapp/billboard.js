@@ -53,6 +53,7 @@ function getHtmlHttpRequest(url) {
     xmlhttp.send(null);
 }
 
+// https://stackoverflow.com/questions/24468459/sending-a-json-to-server-and-retrieving-a-json-in-return-without-jquery
 function getxyzHttpRequest(url) {
     // TO BE IMPLEMENTED!!!
 }
