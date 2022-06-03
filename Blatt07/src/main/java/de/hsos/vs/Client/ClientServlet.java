@@ -22,7 +22,7 @@ public class ClientServlet extends HttpServlet {
   private String username;
   private boolean loggedIn;
 
-  enum SubscibeStatus{ SUCCESS, EXISTS, SERVERNOTFOUND, ERROR }
+  enum SubscribeStatus { SUCCESS, EXISTS, SERVERNOTFOUND, ERROR }
   enum UnsubscribeStatus{ SUCCESS, SERVERNOTFOUND, ERROR }
   enum SendMessageStatus{ SUCCESS, ERROR }
 
@@ -49,23 +49,24 @@ public class ClientServlet extends HttpServlet {
   }
 
   private void handleRequest(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    System.out.println("request from: "+req.getRemoteAddr());
     res.setContentType("text/html");
 
     PrintWriter out = res.getWriter();
     out.println("<html><body>");
 
-    SubscibeStatus subscribeStatus;
+    SubscribeStatus subscribeStatus;
     session = req.getSession(true);
 
     ClientProxyServletImpl clientProxy = (ClientProxyServletImpl) session.getAttribute("ClientProxy");
 
-    if(req.getParameter("subscibe") != null) {
+    if(req.getParameter("subscribe") != null) {
       username = req.getParameter("username");
       session.setAttribute("username", username);
       subscribeStatus = subscribe();
     }else{
       clientProxy.setMessages((ArrayList<String>) session.getAttribute("messages"));
-      subscribeStatus = SubscibeStatus.SUCCESS;
+      subscribeStatus = SubscribeStatus.SUCCESS;
     }
 
     if(req.getParameter("send") != null) {
@@ -149,9 +150,9 @@ public class ClientServlet extends HttpServlet {
     out.close();
   }
 
-  private SubscibeStatus subscribe() {
+  private SubscribeStatus subscribe() {
     if(loggedIn){
-      return SubscibeStatus.EXISTS;
+      return SubscribeStatus.EXISTS;
     }
 
     ClientProxyServletImpl clientProxy = new ClientProxyServletImpl();
@@ -162,13 +163,13 @@ public class ClientServlet extends HttpServlet {
       this.session.setAttribute("ChatProxy", chatProxy);
       this.session.setAttribute("ClientProxy", clientProxy);
     } catch (RemoteException e) {
-      return SubscibeStatus.SERVERNOTFOUND;
+      return SubscribeStatus.SERVERNOTFOUND;
     }
 
     if(session.getAttribute("ChatProxy") == null) {
-      return SubscibeStatus.ERROR;
+      return SubscribeStatus.ERROR;
     } else {
-      return SubscibeStatus.SUCCESS;
+      return SubscribeStatus.SUCCESS;
     }
   }
 

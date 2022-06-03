@@ -10,10 +10,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d9f795bc-a5af-4e2c-9331-3a4e60c85703" name="Changes" comment="gitignore fix">
-      <change afterPath="$PROJECT_DIR$/VS_SoSe22_A7_PatrickFelschen_JulianVoss.pdf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Blatt06/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Blatt06/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/runConfigurations/Tomcat_10_0_21.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/runConfigurations/Tomcat_10_0_21.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Servlets/ClientProxyServletImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Client/ClientProxyServletImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Servlets/ClientServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Client/ClientServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Client/ClientServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/hsos/vs/Client/ClientServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.jsp" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,23 +50,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "DefaultHtmlFileTemplate": "HTML File",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/Users/patrickfelschen/Development/CLionProjects/vs/Blatt07",
-    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml"
-  }
-}]]></component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+  </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/src/main/java/de/hsos/vs" />
     </key>
   </component>
-  <component name="RunManager" selected="Tomcat Server.Tomcat 10.0.21">
+  <component name="RunManager" selected="Application.ChatClient">
     <list>
       <item itemvalue="Application.ChatClient" />
       <item itemvalue="Application.ChatServerImpl" />
@@ -83,6 +84,7 @@
       <workItem from="1654104713699" duration="68000" />
       <workItem from="1654104946760" duration="2322000" />
       <workItem from="1654165459049" duration="5102000" />
+      <workItem from="1654242631165" duration="3618000" />
     </task>
     <task id="LOCAL-00001" summary="servlet">
       <created>1654102513661</created>

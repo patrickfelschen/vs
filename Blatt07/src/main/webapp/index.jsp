@@ -9,7 +9,7 @@
             <h1>Chat-System Anmeldung</h1>
             <label for="username">Name:</label>
             <input type="text" name="username" id="username">
-            <input type="hidden" name="subscibe">
+            <input type="hidden" name="subscribe">
             <button>Anmelden</button>
         </form>
     </body>
