@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="Blatt08-1.0-SNAPSHOT.war">
+    <root id="archive" name="VS_P08_Billboard-1.0-SNAPSHOT.war">
       <element id="artifact" artifact-name="Blatt08:war exploded" />
     </root>
   </artifact>

@@ -60,18 +60,22 @@ function getxyzHttpRequest(url) {
 
 function postHttpRequest(url) {
     // TO BE IMPLEMENTED!!!
+    var name = document.getElementById("contents").value;
+    var data = JSON.stringify({
+        "name": name
+    });
+
     var xmlhttp = new XMLHttpRequest();
-    var content = document.getElementById("contents").value;
     xmlhttp.open("POST", url, true);
-    xmlhttp.setRequestHeader("Content-Type", "application/json");
+    xmlhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
     xmlhttp.onreadystatechange = function () {
-        if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
-            var json = JSON.parse(xmlhttp.responseText);
-            console.log(json);
+        if(xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+            alert(data);
+            console.log(data);
         }
-    };
-    var json = JSON.stringify(content);
-    xmlhttp.send(json);
+    }
+
+    xmlhttp.send(JSON.stringify(data));
 }
 
 function putHttpRequest(url, id) {

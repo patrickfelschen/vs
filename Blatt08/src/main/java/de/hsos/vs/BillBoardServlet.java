@@ -2,6 +2,7 @@ package de.hsos.vs;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Enumeration;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -36,7 +37,7 @@ public class BillBoardServlet extends HttpServlet {
             throws ServletException, IOException {
         String caller_ip = request.getRemoteAddr();
         /* Ausgabe des gesamten Boards */
-        System.out.println("BillBoardServer - GET (" + caller_ip + "): full output");
+        //System.out.println("BillBoardServer - GET (" + caller_ip + "): full output");
         response.setContentType("text/html;charset=UTF-8");
         PrintWriter out = response.getWriter();
         String table = bb.readEntries(caller_ip);
@@ -60,6 +61,7 @@ public class BillBoardServlet extends HttpServlet {
             throws ServletException, IOException {
         String caller_ip = request.getRemoteAddr();
         System.out.println ("BillBoardServer - POST (" + caller_ip + ")");
+        System.out.println(request.getParameter("contents"));
         // TODO implementation of doPost()!
         response.getWriter().close();
     }
