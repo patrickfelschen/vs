@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="Tomcat 10.0.21" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 8.5.78" ALTERNATIVE_JRE_ENABLED="false">
+  <configuration default="false" name="Tomcat 8.5.79" type="#com.intellij.j2ee.web.tomcat.TomcatRunConfigurationFactory" factoryName="Local" APPLICATION_SERVER_NAME="Tomcat 8.5.79" ALTERNATIVE_JRE_ENABLED="false">
     <deployment>
       <artifact name="Blatt08:war exploded">
         <settings>
@@ -9,7 +9,6 @@
     </deployment>
     <server-settings>
       <option name="BASE_DIRECTORY_NAME" value="7865cb38-4d34-4434-ae90-b3569bf41a48" />
-      <option name="HTTP_PORT" value="8008" />
     </server-settings>
     <predefined_log_file enabled="true" id="Tomcat" />
     <predefined_log_file enabled="true" id="Tomcat Catalina" />

@@ -15,7 +15,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
-      <module name="Blatt08" options="-endorseddirs C:\Users\julia\IdeaProjects\vs\Blatt08\target/endorsed" />
+      <module name="Blatt08" options="-endorseddirs C:\Users\Patrick\Development\CLionProjects\vs\Blatt08\target/endorsed" />
     </option>
   </component>
 </project>

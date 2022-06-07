@@ -1,5 +1,10 @@
 package de.hsos.vs;
 
+import org.json.HTTP;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Enumeration;
@@ -60,9 +65,34 @@ public class BillBoardServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String caller_ip = request.getRemoteAddr();
-        System.out.println ("BillBoardServer - POST (" + caller_ip + ")");
-        System.out.println(request.getParameter("contents"));
+
         // TODO implementation of doPost()!
+
+        //System.out.println ("BillBoardServer - POST (" + caller_ip + ")");
+
+        StringBuilder jb = new StringBuilder();
+        String line = null;
+        try {
+            BufferedReader reader = request.getReader();
+            while ((line = reader.readLine()) != null)
+                jb.append(line);
+        } catch (Exception e) { /*report an error*/ }
+
+        try {
+            JSONObject jsonObject = new JSONObject(jb.toString());
+            System.out.println(jsonObject.getString("name"));
+        } catch (JSONException e) {
+            // crash and burn
+            throw new IOException("Error parsing JSON request string");
+        }
+
+        // Work with the data using methods like...
+        // int someInt = jsonObject.getInt("intParamName");
+        // String someString = jsonObject.getString("stringParamName");
+        // JSONObject nestedObj = jsonObject.getJSONObject("nestedObjName");
+        // JSONArray arr = jsonObject.getJSONArray("arrayParamName");
+        // etc...
+
         response.getWriter().close();
     }
 
