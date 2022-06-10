@@ -25,6 +25,8 @@ public class BillBoardJsonAdapter extends BillBoard implements BillBoardAdapterI
             return null;
         }
 
+        bbe.toJson().put("owner", bbe.belongsToCaller(caller_ip));
+
         return bbe.toJson().toString();
     }
 
