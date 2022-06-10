@@ -21,10 +21,12 @@
         <div id="timestamp" style="font-family:arial;font-size:10pt;">
         </div>
         <script type="text/javascript">
-            window.setInterval(function() {
-                getHtmlHttpRequest('BillBoardServer');
-                $('timestamp').innerHTML = new Date().toString();
-            }, 10000);
+             window.setInterval(function() {
+                 getHtmlHttpRequest('BillBoardServer');
+                 $('timestamp').innerHTML = new Date().toString();
+             }, 1000);
+
+            //window.setInterval(getHtmlHttpRequest("BillBoardServer"), 1000);
         </script>
     </body>
 </html>
