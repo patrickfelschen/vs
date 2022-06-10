@@ -1,5 +1,8 @@
 package de.hsos.vs;
 
+
+import org.json.JSONObject;
+
 /**
  * Ein BillBoard Eintrag.
  * 
@@ -39,5 +42,13 @@ public class BillBoardEntry {
             return true;
         }
         return false;
+    }
+
+    public JSONObject toJson() {
+        return  new JSONObject()
+                .put("id", this.id)
+                .put("text", this.text)
+                .put("owner_ip", this.owner_ip)
+                .put("timestamp", this.timestamp);
     }
 }
