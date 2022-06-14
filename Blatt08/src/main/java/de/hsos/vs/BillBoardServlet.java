@@ -7,10 +7,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.*;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.servlet.AsyncContext;
-import javax.servlet.AsyncEvent;
-import javax.servlet.AsyncListener;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -30,6 +27,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet(asyncSupported = true, urlPatterns = {"/BillBoardServer"})
 public class BillBoardServlet extends HttpServlet {
   private final BillBoardHtmlAdapter bb = new BillBoardHtmlAdapter("BillBoardServer");
+  private final BillBoardJsonAdapter bbJson = new BillBoardJsonAdapter("BillBoardServer");
   private final List<AsyncContext> contexts = new LinkedList<>();
 
   // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -72,11 +70,16 @@ public class BillBoardServlet extends HttpServlet {
     JSONObject data = getJSONBody(request.getReader());
     String name = data.getString("name");
 
-    bb.createEntry(name, caller_ip);
+    bbJson.createEntry(name, caller_ip);
 
+    completeContext(asyncContexts);
+
+  }
+
+  private void completeContext(List<AsyncContext> asyncContexts) {
     for(AsyncContext asyncContext: asyncContexts){
       try(PrintWriter writer = asyncContext.getResponse().getWriter()){
-        String table = bb.readEntries(caller_ip);
+        String table = bbJson.readEntries(asyncContext.getRequest().getRemoteAddr());
         writer.println(table);
         writer.flush();
       }catch (IOException e){
@@ -85,7 +88,6 @@ public class BillBoardServlet extends HttpServlet {
         asyncContext.complete();
       }
     }
-
   }
 
   /**
@@ -105,19 +107,9 @@ public class BillBoardServlet extends HttpServlet {
     String caller_ip = request.getRemoteAddr();
     JSONObject data = getJSONBody(request.getReader());
     int id = data.getInt("id");
-    bb.deleteEntry(id, caller_ip);
+    bbJson.deleteEntry(id, caller_ip);
 
-    for(AsyncContext asyncContext: asyncContexts){
-      try(PrintWriter writer = asyncContext.getResponse().getWriter()){
-        String table = bb.readEntries(caller_ip);
-        writer.println(table);
-        writer.flush();
-      }catch (IOException e){
-        e.printStackTrace();
-      }finally {
-        asyncContext.complete();
-      }
-    }
+    completeContext(asyncContexts);
   }
 
   /**
@@ -138,19 +130,9 @@ public class BillBoardServlet extends HttpServlet {
     JSONObject data = getJSONBody(request.getReader());
     int id = data.getInt("id");
     String name = data.getString("name");
-    bb.updateEntry(id, name, caller_ip);
+    bbJson.updateEntry(id, name, caller_ip);
 
-    for(AsyncContext asyncContext: asyncContexts){
-      try(PrintWriter writer = asyncContext.getResponse().getWriter()){
-        String table = bb.readEntries(caller_ip);
-        writer.println(table);
-        writer.flush();
-      }catch (IOException e){
-        e.printStackTrace();
-      }finally {
-        asyncContext.complete();
-      }
-    }
+    completeContext(asyncContexts);
   }
 
   /**

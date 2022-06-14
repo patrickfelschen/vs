@@ -51,7 +51,25 @@ function getHtmlHttpRequest(url) {
                 waiting = false;
                 let postersElement = document.getElementById("posters");
                 if(postersElement != null) {
-                    postersElement.innerHTML = xmlhttp.responseText;
+                    //postersElement.innerHTML = xmlhttp.responseText;
+                    console.log(xmlhttp.responseText);
+                    let json = JSON.parse(xmlhttp.responseText);
+                    console.log(json);
+
+                    let table = "<table>";
+
+                    for(let i = 0; i < json.length; i++) {
+                        if(!json[i]["owner"]) {
+                            table += "<tr><td>" + json[i]["id"] +"<input type='text' size='100' minlength='100' maxlength='100' value='" + json[i]["text"] + "' readonly/></td></tr>"
+                        }
+                        else {
+                            table += "<tr><td>" + json[i]["id"] +"<input type='text' size='100' minlength='100' maxlength='100' value='" + json[i]["text"] + "'/></td></tr>"
+                        }
+                    }
+                    table += "</table>";
+                    postersElement.innerHTML = table;
+
+
                 }
                 $('timestamp').innerHTML = new Date().toString();
             }
