@@ -50,26 +50,34 @@ function getHtmlHttpRequest(url) {
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                 waiting = false;
                 let postersElement = document.getElementById("posters");
-                if(postersElement != null) {
-                    //postersElement.innerHTML = xmlhttp.responseText;
-                    console.log(xmlhttp.responseText);
+                if (postersElement != null) {
                     let json = JSON.parse(xmlhttp.responseText);
                     console.log(json);
 
-                    let table = "<table>";
+                    let table = "<table><tbody>";
 
-                    for(let i = 0; i < json.length; i++) {
-                        if(!json[i]["owner"]) {
-                            table += "<tr><td>" + json[i]["id"] +"<input type='text' size='100' minlength='100' maxlength='100' value='" + json[i]["text"] + "' readonly/></td></tr>"
+                    for (let i = 0; i < json.length; i++) {
+                        table += "<tr>";
+                        table += "<td>" + json[i]["id"] + "</td>";
+                        table += "<td><input type='text' size='100' minlength='100' maxlength='100'";
+                        table += " id='input_field_" + json[i]["id"] + "'";
+                        table += " value='" + json[i]["text"] + "'";
+                        if (json[i]["owner"]) {
+                            table += "/>";
+                            table += "</td>";
+                            table += "<td><button onClick=\"putHttpRequest('BillBoardServer'," + json[i]["id"] + ")\">Update</button></td>"
+                            table += "<td><button onClick=\"deleteHttpRequest('BillBoardServer'," + json[i]["id"] + ")\">Delete</button></td>"
+                        } else {
+                            table += "style='background-color: #eeeeee;'";
+                            table += "readonly />";
+                            table += "</td>";
+                            table += "<td></td>"
+                            table += "<td></td>"
                         }
-                        else {
-                            table += "<tr><td>" + json[i]["id"] +"<input type='text' size='100' minlength='100' maxlength='100' value='" + json[i]["text"] + "'/></td></tr>"
-                        }
+                        table += "</tr>";
                     }
-                    table += "</table>";
+                    table += "</tbody></table>";
                     postersElement.innerHTML = table;
-
-
                 }
                 $('timestamp').innerHTML = new Date().toString();
             }
@@ -95,6 +103,7 @@ function postHttpRequest(url) {
     let data = JSON.stringify({
         "name": name
     });
+    console.log("POST " + url + " " + data);
     xhr.send(data);
 }
 
@@ -108,6 +117,7 @@ function putHttpRequest(url, id) {
         "id": id,
         "name": name
     });
+    console.log("PUT " + url + " " + data);
     xhr.send(data);
 }
 
@@ -120,5 +130,6 @@ function deleteHttpRequest(url, id) {
     let data = JSON.stringify({
         "id": id
     });
+    console.log("DELETE " + url + " " + data);
     xhr.send(data);
 }

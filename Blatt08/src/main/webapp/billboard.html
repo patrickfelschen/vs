@@ -3,8 +3,8 @@
 <head>
     <title>Billboard</title>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width">
-    <script type="text/javascript" src="billboard.js"></script>
+    <meta content="width=device-width" name="viewport">
+    <script src="billboard.js" type="text/javascript"></script>
     <script>
         setGetMethod(0); /* html einstellen */
     </script>
@@ -12,7 +12,7 @@
 <body style="font-family:arial;">
 <h1>Plakatwand</h1>
 <h3>Neues Plakat einstellen:</h3>
-<input type="text" size="100" maxlength="100" id="contents">
+<input id="contents" maxlength="100" size="100" type="text">
 <button onClick="postHttpRequest('BillBoardServer')">Post</button>
 <h3>Plakate:</h3>
 <div id="posters">
@@ -21,7 +21,7 @@
 <div id="timestamp" style="font-family:arial;font-size:10pt;">
 </div>
 <script type="text/javascript">
-    window.setInterval(function() {
+    window.setInterval(function () {
         getHtmlHttpRequest('BillBoardServer');
         $('timestamp').innerHTML = new Date().toString();
     }, 1000);

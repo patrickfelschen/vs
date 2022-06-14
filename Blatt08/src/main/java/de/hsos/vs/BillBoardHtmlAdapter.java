@@ -11,8 +11,6 @@ public class BillBoardHtmlAdapter extends BillBoard implements BillBoardAdapterI
     super(ctxt);
   }
 
-  ;
-
   /**
    * Lesen eines Eintraeges.
    *
@@ -77,5 +75,4 @@ public class BillBoardHtmlAdapter extends BillBoard implements BillBoardAdapterI
     return result.toString();
   }
 
-  ;
 }

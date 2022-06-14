@@ -50,24 +50,24 @@ function getHtmlHttpRequest(url) {
             if (xmlhttp.readyState === 4 && xmlhttp.status === 200) {
                 waiting = false;
                 let postersElement = document.getElementById("posters");
-                if(postersElement != null) {
+                if (postersElement != null) {
                     let json = JSON.parse(xmlhttp.responseText);
                     console.log(json);
 
                     let table = "<table><tbody>";
 
-                    for(let i = 0; i < json.length; i++) {
+                    for (let i = 0; i < json.length; i++) {
                         table += "<tr>";
                         table += "<td>" + json[i]["id"] + "</td>";
                         table += "<td><input type='text' size='100' minlength='100' maxlength='100'";
                         table += " id='input_field_" + json[i]["id"] + "'";
                         table += " value='" + json[i]["text"] + "'";
-                        if(json[i]["owner"]) {
+                        if (json[i]["owner"]) {
                             table += "/>";
                             table += "</td>";
                             table += "<td><button onClick=\"putHttpRequest('BillBoardServer'," + json[i]["id"] + ")\">Update</button></td>"
                             table += "<td><button onClick=\"deleteHttpRequest('BillBoardServer'," + json[i]["id"] + ")\">Delete</button></td>"
-                        }else{
+                        } else {
                             table += "style='background-color: #eeeeee;'";
                             table += "readonly />";
                             table += "</td>";

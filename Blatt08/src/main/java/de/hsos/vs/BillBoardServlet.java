@@ -3,16 +3,18 @@ package de.hsos.vs;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.*;
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Implementierung des BillBoard-Servers.
@@ -24,7 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author heikerli
  */
-  @WebServlet(asyncSupported = true, urlPatterns = {"/BillBoardServer"})
+@WebServlet(asyncSupported = true, urlPatterns = {"/BillBoardServer"})
 public class BillBoardServlet extends HttpServlet {
   private final BillBoardHtmlAdapter bb = new BillBoardHtmlAdapter("BillBoardServer");
   private final BillBoardJsonAdapter bbJson = new BillBoardJsonAdapter("BillBoardServer");
@@ -77,14 +79,14 @@ public class BillBoardServlet extends HttpServlet {
   }
 
   private void completeContext(List<AsyncContext> asyncContexts) {
-    for(AsyncContext asyncContext: asyncContexts){
-      try(PrintWriter writer = asyncContext.getResponse().getWriter()){
+    for (AsyncContext asyncContext : asyncContexts) {
+      try (PrintWriter writer = asyncContext.getResponse().getWriter()) {
         String table = bbJson.readEntries(asyncContext.getRequest().getRemoteAddr());
         writer.println(table);
         writer.flush();
-      }catch (IOException e){
+      } catch (IOException e) {
         e.printStackTrace();
-      }finally {
+      } finally {
         asyncContext.complete();
       }
     }

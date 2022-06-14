@@ -15,10 +15,10 @@ import java.util.Set;
  * @author heikerli
  */
 public class BillBoard {
-  private final short SIZE = 10;
   static private String servlet_ctxt;
-  Set<Integer> freelist;
+  private final short SIZE = 10;
   public final BillBoardEntry[] billboard = new BillBoardEntry[SIZE];
+  Set<Integer> freelist;
 
   public BillBoard(String ctxt) {
     BillBoard.servlet_ctxt = ctxt;
@@ -28,8 +28,6 @@ public class BillBoard {
       freelist.add(i);
     }
   }
-
-  ;
 
   /* Interne Funktion: Finden eines Slots zur Substitution durch neues Plakat */
   private int pickIndex() {
