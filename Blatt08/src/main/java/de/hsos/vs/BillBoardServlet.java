@@ -28,7 +28,7 @@ import java.util.List;
  */
 @WebServlet(asyncSupported = true, urlPatterns = {"/BillBoardServer"})
 public class BillBoardServlet extends HttpServlet {
-  private final BillBoardHtmlAdapter bb = new BillBoardHtmlAdapter("BillBoardServer");
+  // private final BillBoardHtmlAdapter bb = new BillBoardHtmlAdapter("BillBoardServer");
   private final BillBoardJsonAdapter bbJson = new BillBoardJsonAdapter("BillBoardServer");
   private final List<AsyncContext> contexts = new LinkedList<>();
 
@@ -44,7 +44,6 @@ public class BillBoardServlet extends HttpServlet {
    */
   @Override
   protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    final String caller_ip = request.getRemoteAddr();
     /* Ausgabe des gesamten Boards */
     AsyncContext asyncContext = request.startAsync(request, response);
     asyncContext.setTimeout(10 * 60 * 1000);
@@ -64,8 +63,6 @@ public class BillBoardServlet extends HttpServlet {
   protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     String caller_ip = request.getRemoteAddr();
 
-    // TODO implementation of doPost()!
-
     List<AsyncContext> asyncContexts = new ArrayList<>(this.contexts);
     this.contexts.clear();
 
@@ -75,7 +72,6 @@ public class BillBoardServlet extends HttpServlet {
     bbJson.createEntry(name, caller_ip);
 
     completeContext(asyncContexts);
-
   }
 
   private void completeContext(List<AsyncContext> asyncContexts) {
