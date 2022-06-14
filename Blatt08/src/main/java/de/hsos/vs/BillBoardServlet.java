@@ -24,7 +24,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author heikerli
  */
-@WebServlet(asyncSupported = true, urlPatterns = {"/BillBoardServer"})
+  @WebServlet(asyncSupported = true, urlPatterns = {"/BillBoardServer"})
 public class BillBoardServlet extends HttpServlet {
   private final BillBoardHtmlAdapter bb = new BillBoardHtmlAdapter("BillBoardServer");
   private final BillBoardJsonAdapter bbJson = new BillBoardJsonAdapter("BillBoardServer");
