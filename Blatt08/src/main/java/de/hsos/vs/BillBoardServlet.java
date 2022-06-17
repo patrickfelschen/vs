@@ -98,7 +98,6 @@ public class BillBoardServlet extends HttpServlet {
    */
   @Override
   protected void doDelete(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    // TODO implementation of doDelete()!
     List<AsyncContext> asyncContexts = new ArrayList<>(this.contexts);
     this.contexts.clear();
 
@@ -120,11 +119,10 @@ public class BillBoardServlet extends HttpServlet {
    */
   @Override
   protected void doPut(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    String caller_ip = request.getRemoteAddr();
-    // TODO implementation of doPut()!
     List<AsyncContext> asyncContexts = new ArrayList<>(this.contexts);
     this.contexts.clear();
 
+    String caller_ip = request.getRemoteAddr();
     JSONObject data = getJSONBody(request.getReader());
     int id = data.getInt("id");
     String name = data.getString("name");
